@@ -347,7 +347,7 @@ OC.Upload = {
 								data.errorThrown = t('files',
 									'Total file size {size1} exceeds your browser upload limit. Please use the {ownCloud} desktop client to upload files bigger than {size2}.', {
 									'size1': humanFileSize(file.size),
-									'ownCloud' : 'ownCloud',
+									'ownCloud' : OC.theme.name || 'ownCloud',
 									'size2': humanFileSize(maxUploadFileSize)
 								});
 							}
@@ -601,7 +601,7 @@ OC.Upload = {
 							+ '</span><span class="mobile">'
 							+ t('files', '...')
 							+ '</span></em>');
-										$('#uploadprogressbar').tipsy({gravity:'n', fade:true, live:true});
+					$('#uploadprogressbar').tipsy({gravity:'n', fade:true, live:true});
 					OC.Upload._showProgressBar();
 				});
 				fileupload.on('fileuploadprogress', function(e, data) {
