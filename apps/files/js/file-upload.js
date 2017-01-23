@@ -336,6 +336,35 @@ OC.Upload = {
 						data.errorThrown = errorMessage;
 					}
 
+					// detect browser and version to handle IE11 upload file size limit
+					// $.browser detects "mozilla" for IE11, which in this case we use window.navigator.userAgent
+					ie = false;
+					ieversion = 0;
+
+					var ua = window.navigator.userAgent;
+			    var trident = ua.indexOf('Trident/');
+			    if (trident > 0) {
+			        // IE 11 => return version number
+			        var rv = ua.indexOf('rv:');
+			        ie = true;
+			        ieversion = parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+			    }
+
+			    // check browser and version
+			    if (ie && ieversion == 11) {
+						// Check for the various File API support.
+						if (window.File && window.FileReader && window.FileList && window.Blob) {
+			  			// check filesize (> 4 GB is not supported in IE11)
+							if (file.size > 4187593113) {
+								data.textStatus = 'sizeexceedbrowserlimit';
+								data.errorThrown = t('files',
+									'Total file size {size1} exceeds your browser upload limit. Please use the owncloud desktop client to upload files bigger than 4GB.', {
+									'size1': humanFileSize(file.size)
+								});
+							}
+		      	}
+					}
+
 					// in case folder drag and drop is not supported file will point to a directory
 					// http://stackoverflow.com/a/20448357
 					if ( ! file.type && file.size%4096 === 0 && file.size <= 102400) {
