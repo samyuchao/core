@@ -337,19 +337,7 @@ OC.Upload = {
 					}
 
 					// detect browser and version to handle IE11 upload file size limit
-					// $.browser detects "mozilla" for IE11, which in this case we use window.navigator.userAgent
-					var ieversion = 0;
-					var ua = window.navigator.userAgent;
-					if (OC.Util.isIE() && ua.indexOf('Trident/') > 0) {
-						// IE 11 => return version number
-						var rv = ua.indexOf('rv:');
-						if(rv > -1) {
-							ieversion = parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-						}
-					}
-
-					// check browser and version
-					if (ieversion === 11) {
+					if (OC.Util.isIE11()) {
 						// Check for the various File API support.
 						if (window.File && window.FileReader && window.FileList && window.Blob) {
 							var maxUploadFileSize = 4187593113;
