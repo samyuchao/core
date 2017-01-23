@@ -156,6 +156,9 @@ timestampedNode('SLAVE') {
 }
 
 def isOnReleaseBranch ()  {
+	// TEMP enable to test on branch
+	return true;
+
     if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'stable9.1' || env.BRANCH_NAME == 'stable9' || env.BRANCH_NAME == 'stable8.2') {
         return true;
     }
