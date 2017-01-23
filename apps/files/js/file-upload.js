@@ -338,31 +338,32 @@ OC.Upload = {
 
 					// detect browser and version to handle IE11 upload file size limit
 					// $.browser detects "mozilla" for IE11, which in this case we use window.navigator.userAgent
-					ie = false;
-					ieversion = 0;
-
+					var ieversion = 0;
 					var ua = window.navigator.userAgent;
-			    var trident = ua.indexOf('Trident/');
-			    if (trident > 0) {
-			        // IE 11 => return version number
-			        var rv = ua.indexOf('rv:');
-			        ie = true;
-			        ieversion = parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-			    }
+					if (OC.Util.isIE() && ua.indexOf('Trident/') > 0) {
+						// IE 11 => return version number
+						var rv = ua.indexOf('rv:');
+						if(rv > -1) {
+							ieversion = parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+						}
+					}
 
-			    // check browser and version
-			    if (ie && ieversion == 11) {
+					// check browser and version
+					if (ieversion === 11) {
 						// Check for the various File API support.
 						if (window.File && window.FileReader && window.FileList && window.Blob) {
-			  			// check filesize (> 4 GB is not supported in IE11)
-							if (file.size > 4187593113) {
+							var maxUploadFileSize = 4187593113;
+							// check filesize (> 4 GB is not supported in IE11); limit is set to 3.9GB
+							if (file.size > maxUploadFileSize) {
 								data.textStatus = 'sizeexceedbrowserlimit';
 								data.errorThrown = t('files',
-									'Total file size {size1} exceeds your browser upload limit. Please use the owncloud desktop client to upload files bigger than 4GB.', {
-									'size1': humanFileSize(file.size)
+									'Total file size {size1} exceeds your browser upload limit. Please use the {ownCloud} desktop client to upload files bigger than {size2}.', {
+									'size1': humanFileSize(file.size),
+									'ownCloud' : 'ownCloud',
+									'size2': humanFileSize(maxUploadFileSize)
 								});
 							}
-		      	}
+						}
 					}
 
 					// in case folder drag and drop is not supported file will point to a directory
@@ -612,7 +613,7 @@ OC.Upload = {
 							+ '</span><span class="mobile">'
 							+ t('files', '...')
 							+ '</span></em>');
-                    $('#uploadprogressbar').tipsy({gravity:'n', fade:true, live:true});
+										$('#uploadprogressbar').tipsy({gravity:'n', fade:true, live:true});
 					OC.Upload._showProgressBar();
 				});
 				fileupload.on('fileuploadprogress', function(e, data) {
